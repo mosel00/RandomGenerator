@@ -49,20 +49,21 @@ function createView() {
     let bExp = createButton("Export");
     let bImp = createButton("Import");
     let iImp = document.createElement("input");
-    cfg = new Config(onResult);
     let bAdd = createButton("Add");
+    cfg = new Config(onResult);
 
     bExp.parent(cfgDiv);
     bImp.parent(cfgDiv);
     bImp.elt.appendChild(iImp);
-    cfgDiv.appendChild(cfg.div);
     bAdd.parent(cfgDiv);
+    cfgDiv.appendChild(cfg.div);
 
     bExp.style("margin-left", "1.5em");
     bExp.style("float", "left");
     bExp.mousePressed(() => downloadJson("config.json", cfg.export()));
 
     bImp.mousePressed(() => iImp.click());
+    bImp.style("float", "left");
 
     iImp.type = "file";
     iImp.accept = ".json";
@@ -71,7 +72,6 @@ function createView() {
         cfg.import(JSON.parse(await evt.target.files[0].text()))
     });
     
-    bAdd.style("margin-left", "1.5em");
     bAdd.mousePressed(() => cfg.addOption())
 
     bSpin.mousePressed(() => cfg.wheel.spin());

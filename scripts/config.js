@@ -7,6 +7,7 @@ class Config {
         this.options = [];
         this.oldValues = [];
         this.div = document.createElement("div");
+        this.onResult = onResult;
         parent.appendChild(this.div);
 
         this.wheel = new Wheel(onResult);
@@ -100,7 +101,7 @@ class Config {
 
         this.options = [];
 
-        this.wheel = new Wheel(obj.weights);
+        this.wheel = new Wheel(this.onResult, obj.weights);
 
         for (let i = 0; i < obj.weights.length; i++) {
             this.createOption(obj.weights[i].weight, obj.weights[i].text);
