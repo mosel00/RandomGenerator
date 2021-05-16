@@ -1,32 +1,30 @@
-<html>
-    <head>
-        <script>
-            function importScript(src) {
-                let script = document.getElementById(src);
-                if (!script) {
-                    script = document.createElement("script");
-                    script.id = src;
-                    script.src = src;
-                    document.head.append(script);
-                }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript">
+        function importScript(src) {
+            let script = document.getElementById(src);
+            if (!script) {
+                script = document.createElement("script");
+                script.id = src;
+                script.src = src;
+                script.type = "text/javascript";
+                document.head.append(script);
             }
+        }
 
-            function imports(...srcs) {
-                for (let i = 0; i < srcs.length; i++) {
-                    importScript(srcs[i]);
-                }
+        function imports(...srcs) {
+            for (let i = 0; i < srcs.length; i++) {
+                importScript(srcs[i]);
             }
-        </script>
-        <script src="scripts/sketch.js"></script>
-        <style>
-            html {
-                background: #1E1E1E;
-            }
+        }
+    </script>
+    <script type="text/javascript" src="scripts/sketch.js" id="scripts/sketch.js"></script>
+    <title>Random Generator</title>
+</head>
 
-            p {
-                color: #D4D4D4;
-            }
-        </style>
-    </head>
-    <body></body>
+<body onload="run();"></body>
 </html>

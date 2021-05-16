@@ -1,0 +1,87 @@
+* {
+    color: #D4D4D4;
+}
+
+html {
+    background: #1E1E1E;
+}
+
+button {
+    color: black;
+    cursor: pointer;
+}
+
+input {
+    color: black;
+}
+
+/* Classes */
+
+.actionOption {
+    float: left;
+}
+
+.configDiv {
+    display: flex;
+}
+
+.configSelectAction {
+    padding: 20px;
+    background: #1E1E1E;
+    border: 1px solid #d4d4d4;
+    border-radius: 10px;
+}
+
+.configSelectAction > h1 {
+    margin: 0 0 20px 0;
+}
+
+.configSelectAction > .actionDiv {
+    padding: 10px;
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.configSelectAction > .actionDiv:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.configOption {
+}
+
+.nameInput {
+    float: left;
+    width: 150px;
+}
+
+.popupWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.removeButton {
+    float: left;
+}
+
+.weightInput {
+    float: left;
+    width: 50px;
+}
+
+.wheelDiv {
+    margin-bottom: 2em;
+}
+
+.wheelDiv > div > canvas {
+    visibility: visible;
+}
