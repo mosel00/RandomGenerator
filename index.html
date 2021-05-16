@@ -1,7 +1,23 @@
 <html>
     <head>
-        <script src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.js"></script>
-        <script src="sketch.js"></script>
+        <script>
+            function importScript(src) {
+                let script = document.getElementById(src);
+                if (!script) {
+                    script = document.createElement("script");
+                    script.id = src;
+                    script.src = src;
+                    document.head.append(script);
+                }
+            }
+
+            function imports(...srcs) {
+                for (let i = 0; i < srcs.length; i++) {
+                    importScript(srcs[i]);
+                }
+            }
+        </script>
+        <script src="scripts/sketch.js"></script>
         <style>
             html {
                 background: #1E1E1E;
