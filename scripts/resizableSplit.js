@@ -22,6 +22,7 @@ class ResizableSplit {
         
         if (horizontal) {
             this.#container.style.width = "100%";
+            this.#container.style.flexFlow = "row";
             this.#splitter.classList.add("horizontal");
         } else {
             this.#container.style.height = "100%";

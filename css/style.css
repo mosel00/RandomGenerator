@@ -77,12 +77,21 @@ input:focus {
 .content {
     display: grid;
     grid-template-columns: var(--sidebar-width) auto;
+    grid-template-rows: 100%;
     flex: 1 1 auto;
+    height: calc(100% - 44px);
+    /* overflow: hidden; */
+}
+
+.content > .main {
+    height: 100%;
+    /* overflow: hidden; */
 }
 
 .content > .side {
     background: var(--darken);
     padding: 10px;
+    overflow-y: auto;
 }
 
 .dropdown {
@@ -124,7 +133,7 @@ input:focus {
 .splitter.horizontal {
     cursor: col-resize;
     width: 10px;
-    height: 100%;
+    /* height: 100%; */
 }
 
 .splitter.vertical {
@@ -228,7 +237,9 @@ input:focus {
 }
 
 .console {
-    width: 100%;
+    width: calc(100% - 2 * 10px);
+    height: calc(100% - 2 * 10px);
+    padding: 10px;
     background: var(--console-color);
 }
 
@@ -250,6 +261,7 @@ input:focus {
 
 .spinDiv {
     display: flex;
+    width: min-content;
     justify-content: center;
     flex-direction: column;
 }
@@ -264,8 +276,9 @@ input:focus {
 
 .wheelDiv {
     display: flex;
+    overflow-x: hidden;
+    overflow-y: auto;
     height: 100%;
-    overflow-y: scroll;
 }
 
 .wheelList {

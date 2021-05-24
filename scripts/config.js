@@ -14,17 +14,19 @@ class Config {
         this.sideBar = document.createElement("div");
         sideBar.appendChild(this.sideBar);
         
-        // let split = new ResizableSplit(false);
-        // mainView.appendChild(split.container);
+        let split = new ResizableSplit(true);
+        mainView.appendChild(split.container);
+        split.container.style.height = "100%";
 
         this.mainView = document.createElement("div");
         this.mainView.classList.add("wheelDiv");
-        mainView.appendChild(this.mainView);
-        // split.first = this.mainView;
+        // mainView.appendChild(this.mainView);
+        split.first = this.mainView;
+        this.mainView.parentNode.style.height = "100%";
+        this.mainView.parentNode.style.width = "calc(100% - 400px)"
 
-        // this.console = new Console();
-        // split.second = this.console.container;
-
+        this.console = new Console();
+        split.second = this.console.container;
 
         this.prepareUI();
 
@@ -76,7 +78,7 @@ class Config {
     }
 
     addWheel(name = "Wheel", weights = []) {
-        let config = new WheelConfig(name, weights);
+        let config = new WheelConfig(name, weights, (text => this.console.writeLine(text)).bind(this));
         
         let item = document.createElement("li");
         const wheel = { config: config, listItem: item };

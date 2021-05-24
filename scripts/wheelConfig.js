@@ -6,13 +6,15 @@ imports(
 );
 
 class WheelConfig {
-    constructor(name = "", weights = []) {
+    constructor(name = "", weights = [], output = () => {}) {
         this.name = name;
         this.options = [];
         this.oldValues = [];
         this.div = null;
         this.optionList = document.createElement("ul");
         this.optionList.classList.add("optionList");
+
+        this.output = output;
 
         this.wheel = new Wheel(weights, WheelConfig.getDefaultAction(this));
         if (weights.length === 0) {
@@ -161,7 +163,7 @@ class WheelConfig {
 
     static getDefaultAction(cfg) {
         return obj => () => {
-            console.log(obj.name);
+            cfg.output(obj.name);
         };
     }
 
