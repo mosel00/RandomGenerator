@@ -6,9 +6,16 @@
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript">
         function importScript(src) {
-            let script = document.getElementById(src);
-            if (!script) {
-                script = document.createElement("script");
+            const urlBase = location.href.substring(0, location.href.lastIndexOf('/'));
+            const regex = /^https?:\/\//i;
+            const toFull = url => regex.test(url) ? url : url.length > 0 && url[0] == '/' ? urlBase + url : urlBase + '/' + url; 
+
+            let fullUrl = toFull(src);
+            const urlEquals = url => toFull(url) == fullUrl;
+
+            const alreadyLoaded = Array.from(document.head.children).filter(obj => obj.nodeName === "SCRIPT" && urlEquals(obj.id)).length > 0;
+            if (!alreadyLoaded) {
+                let script = document.createElement("script");
                 script.id = src;
                 script.src = src;
                 script.type = "text/javascript";
@@ -22,9 +29,29 @@
             }
         }
     </script>
-    <script type="text/javascript" src="scripts/sketch.js" id="scripts/sketch.js"></script>
-    <title>Random Generator</title>
+    <script type="text/javascript" src="scripts/script.js" id="scripts/script.js"></script>
+    <title>mosel00 - Random Generator</title>
 </head>
 
-<body onload="run();"></body>
+<body onload="run('sideBar', 'mainView');">
+    <nav class="topNav">
+        <div class="dropdown">
+            <a>Wheel of Fortune</a>
+            <div class="dropdown-content">
+                <div onclick="importConfig();">Open/Upload</div>
+                <div onclick="exportConfig();">Save/Download</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div id="sideBar" class="side">
+
+        </div>
+
+        <div id="mainView" class="main">
+
+        </div>
+    </div>
+</body>
 </html>

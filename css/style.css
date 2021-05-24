@@ -1,34 +1,184 @@
+:root {
+    --text: #d4d4d4;
+    --background: #1e1e1e;
+    --semihighlight: #252525;
+    --highlight: #333333;
+    --accent: #007acc;
+
+    --red: #cc0000;
+
+    --console-color: #000000;
+    
+    --darken: rgba(0, 0, 0, 0.1);
+    --darken-hover: rgba(0, 0, 0, 0.2);
+    --darken-full: rgba(0, 0, 0, 0.5);
+    --lighten: rgba(255, 255, 255, 0.1);
+    --lighten-full: rgba(255, 255, 255, 0.5);
+
+    --sidebar-width: 300px;
+}
+
 * {
-    color: #D4D4D4;
+    color: var(--text);
 }
 
 html {
-    background: #1E1E1E;
+    background: var(--background);
+    height: 100%;
+    width: 100%;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 button {
-    color: black;
+    background: transparent;
     cursor: pointer;
+    border: none;
+    padding: 0.5em;
+    font-size: 1rem;
+}
+
+button:hover {
+    background: var(--lighten);
+}
+
+button.remove:hover {
+    color: var(--red);
+    background: none;
 }
 
 input {
-    color: black;
+    display: block;
+    border-bottom: 0.15em solid var(--lighten-full);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    color: white;
+    background: transparent;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent);
 }
 
 /* Classes */
 
-.actionOption {
+/* Main */
+
+.content {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) auto;
+    flex: 1 1 auto;
+}
+
+.content > .side {
+    background: var(--darken);
+    padding: 10px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown > .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--semihighlight);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover > .dropdown-content {
+    display: block;
+}
+
+.dropdown-content > div {
+    padding: 0.5em;
+    cursor: pointer;
+}
+
+.dropdown-content > div:hover {
+    background: var(--highlight);
+}
+
+.dropdown-content > div::before {
+    padding: 0 10px;
+    content: "";
+}
+
+.splitter {
+    background: var(--lighten);
+}
+
+.splitter.horizontal {
+    cursor: col-resize;
+    width: 10px;
+    height: 100%;
+}
+
+.splitter.vertical {
+    cursor: row-resize;
+    width: 100%;
+    height: 10px;
+}
+
+.topNav {
+    overflow: visible;
+    background-color: var(--semihighlight);
+}
+
+.topNav > * {
     float: left;
 }
 
-.configDiv {
+.topNav a {
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+  
+.topNav a:hover {
+    background-color: var(--highlight);
+}
+
+.topNav a.active {
+    background-color: var(--accent);
+}
+
+/* Wheel of Fortune */
+
+.buttonBar {
     display: flex;
+}
+
+.configDiv {
+    padding: 20px;
+}
+
+.configDiv > .buttonBar {
+    padding: 0 0 0 20px;
+}
+
+.configDiv > .optionList {
+    margin: 0;
 }
 
 .configSelectAction {
     padding: 20px;
-    background: #1E1E1E;
-    border: 1px solid #d4d4d4;
+    background: var(--background);
+    border: 1px solid var(--text);
     border-radius: 10px;
 }
 
@@ -38,7 +188,7 @@ input {
 
 .configSelectAction > .actionDiv {
     padding: 10px;
-    border: 1px solid #d4d4d4;
+    border: 1px solid var(--text);
     border-radius: 5px;
     display: flex;
     justify-content: center;
@@ -46,22 +196,51 @@ input {
 }
 
 .configSelectAction > .actionDiv:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--darken-hover);
 }
 
 .configOption {
+    height: 24px;
+    display: flex;
+    margin: 2px;
 }
 
-.nameInput {
-    float: left;
+.configOption > .actionOption {
+    height: 24px;
+    padding: 0 4px;
+}
+
+.configOption > .nameInput {
+    height: 20px;
     width: 150px;
+    margin-right: 4px;
+}
+
+.configOption > .remove {
+    height: 24px;
+    padding: 0 4px;
+    font-size: 1.5em;
+}
+
+.configOption > .weightInput {
+    height: 20px;
+    width: 50px;
+}
+
+.console {
+    width: 100%;
+    background: var(--console-color);
+}
+
+.optionList {
+    padding: 0;
 }
 
 .popupWrapper {
     position: absolute;
     top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--darken-full);
     width: 100%;
     height: 100%;
     display: flex;
@@ -69,19 +248,60 @@ input {
     align-items: center;
 }
 
-.removeButton {
-    float: left;
+.spinDiv {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
-.weightInput {
-    float: left;
-    width: 50px;
+/* .spinDiv > button {
+    width: fit-content;
+} */
+
+.spinDiv > div > canvas {
+    visibility: visible;
 }
 
 .wheelDiv {
-    margin-bottom: 2em;
+    display: flex;
+    height: 100%;
+    overflow-y: scroll;
 }
 
-.wheelDiv > div > canvas {
-    visibility: visible;
+.wheelList {
+    list-style: none;
+    padding: 0;
+}
+
+.wheelList > li {
+    margin: 2px;
+    height: 24px;
+    display: flex;
+    flex-direction: row;
+}
+
+.wheelList > li > input {
+    height: 20px;
+    flex: 1 1 auto;
+}
+
+.wheelList > li > .drag {
+    height: 24px;
+    padding: 0 4px;
+    font-size: 1.5em;
+    color: var(--lighten-full);
+    cursor: grab;
+    user-select: none;
+}
+
+.wheelList > li > .open {
+    height: 24px;
+    padding: 0 4px;
+    font-size: 1.5em;
+}
+
+.wheelList > li > .remove {
+    height: 24px;
+    padding: 0 4px;
+    font-size: 1.5em;
 }

@@ -4,7 +4,7 @@ imports(
 );
 
 class WheelOption {
-    constructor(name, weight = 0, action = () => {}, previousProcenturalSum = 1, procenturalWeight = 0, color = 0) {
+    constructor(name, weight = 0, action = { type: 0, data: {}, action: () => {} }, previousProcenturalSum = 1, procenturalWeight = 0, color = 0) {
         this.name = name;
         this.weight = weight, 
         this.action = action;
@@ -15,13 +15,14 @@ class WheelOption {
 }
 
 class Wheel {
-    constructor(weights = []) {
+    constructor(weights, defaultAction) {
         this.weights = new Array(weights.length);
+        this.defaultAction = defaultAction;
 
         this.sum = 0;
         for (let i = 0; i < weights.length; i++) {
             this.sum += Math.max(weights[i].weight, 0);
-            this.weights[i] = new WheelOption(weights[i].weight, weights[i].text);
+            this.weights[i] = new WheelOption("", weights[i].weight);
         }
 
         this.recalculate();
@@ -30,9 +31,9 @@ class Wheel {
     }
 
     addWeight() {
-        this.weights.push(new WheelOption("Option"));
-
-        this.recalculateColors();
+        const option = new WheelOption("Option");
+        option.action.action = this.defaultAction(option);
+        this.weights.push(option);
     }
 
     modifyWeight(index, value) {
@@ -47,7 +48,7 @@ class Wheel {
     modifyName(index, name) {
         this.weights[index].name = name;
     }
-
+    
     modifyAction(index, action) {
         this.weights[index].action = action;
     }
@@ -60,46 +61,7 @@ class Wheel {
     }
 
     recalculate() {
-        this.recalculateColors();
         this.recalculateWeights();
-    }
-
-    recalculateColors() {
-        let randomColor = () => {
-            let shuffle = (arr) => {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    let j = Math.floor(Math.random() * (i + 1));
-                    let temp = arr[i];
-                    arr[i] = arr[j];
-                    arr[j] = temp;
-                }
-            }
-            
-            let colors = new Array(this.weights.length);
-        
-            colorMode(HSB);
-            for (let i = 0; i < this.weights.length; i++) {
-                let hue = i / this.weights.length;
-                colors[i] = color(hue * 360, 100, 100);
-            }
-        
-            shuffle(colors);
-            
-            for (let i = 0; i < this.weights.length; i++) {
-                this.weights[i].color = colors[i];
-            }
-        }
-
-        let twoColor = () => {
-            const even = color(0x00, 0xA7, 0xCC);
-            const odd = color(0x33);
-
-            for (let i = 0; i < this.weights.length; i++) {
-                this.weights[i].color = i % 2 == 0 ? even : odd;
-            }
-        }
-
-        // twoColor();
     }
 
     recalculateWeights() {
@@ -172,7 +134,7 @@ class Wheel {
         }
 
         if (result[1] !== undefined) {
-            result[1].action();
+            result[1].action.action();
         }
     }
 

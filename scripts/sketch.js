@@ -30,8 +30,3 @@ const wheelSketch = cfg => sketch => {
         );
     };
 };
-
-function run() {
-    let cfgs = new Config();
-    cfgs.addWheel();
-}

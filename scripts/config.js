@@ -1,257 +1,169 @@
 imports(
-    "scripts/wheel.js",
+    "scripts/constants.js",
+    "scripts/wheelConfig.js",
     "scripts/util.js",
-    "scripts/sketch.js"
+    "scripts/draggableListItem.js",
+    "scripts/resizableSplit.js",
+    "scripts/console.js"
 );
 
-class WheelConfig {
-    constructor(name) {
-        this.name = name;
-        this.options = [];
-        this.oldValues = [];
-        this.div = document.createElement("div");
-
-        this.wheel = new Wheel();
-        this.addOption();
-        this.setFirstRemoveVisibility(false);
-    }
-
-    setFirstRemoveVisibility(show) {
-        this.options[0].children[0].style.visibility = show ? "visible" : "hidden";
-    }
-
-    createOption(name = "Option", weight = 0, text = "") {
-        let option = document.createElement("div");
-        option.classList.add("configOption");
-        this.div.appendChild(option);
-        this.oldValues.push("");
-
-        let obj = this;
-
-        let removeButton = document.createElement("button");
-        removeButton.classList.add("removeButton");
-        removeButton.innerText = "-";
-        removeButton.addEventListener("click", () => obj.removeOption(this.options.indexOf(option)));
-        option.appendChild(removeButton);
-
-        let nameInput = document.createElement("input");
-        nameInput.classList.add("nameInput");
-        nameInput.value = name;
-        nameInput.addEventListener("input", () => this.wheel.modifyName(this.options.indexOf(option), nameInput.value === undefined ? "" : nameInput.value));
-        option.appendChild(nameInput);
-
-        let weightInput = document.createElement("input");
-        weightInput.classList.add("weightInput");
-        weightInput.value = weight;
-        weightInput.addEventListener("input", () => {
-            let value = weightInput.value;
-            let index = this.options.indexOf(option);
-
-            if (obj.oldValues[index].length < value.length) {
-                let lastChar = value[value.length - 1];
-                if (0 <= lastChar && lastChar <= 9) {
-                    obj.oldValues[index] = value;
-                    this.wheel.modifyWeight(index, parseInt(value));
-                } else {
-                    weightInput.value = obj.oldValues[index];
-                }
-            } else {
-                obj.oldValues[index] = value;
-                let v = value.length == 0 ? 0 : parseInt(value);
-                this.wheel.modifyWeight(index, v);
-            }
-        });
-        option.appendChild(weightInput);
-
-        let action = document.createElement("button");
-        
-        action.classList.add("actionOption");
-        action.innerText = "No action selected";
-        option.appendChild(action);
-
-        let actionDiv = document.createElement("div");
-        action.addEventListener("click", () => this.openSelectPopup(() => this.options.indexOf(option), action, actionDiv));
-        option.appendChild(actionDiv);
-
-        let clearDiv = document.createElement("div");
-        clearDiv.style.clear = "both";
-        option.appendChild(clearDiv);
-
-        this.options.push(option);
-        this.setFirstRemoveVisibility(true);
-    }
-
-    static actions() {
-        return [
-            ["Text", WheelConfig.textAction]
-        ];
-    }
-
-    static textAction(cfg, id, div) {
-        let textInput = document.createElement("input");
-        textInput.addEventListener("input", () => {
-            cfg.wheel.modifyAction(id(), () => console.log(textInput.value === undefined ? "" : textInput.value));
-        });
-        div.appendChild(textInput);
-    }
-
-    openSelectPopup(id, button, actionContainer) {
-        openInternalPopup(close => {
-            let div = document.createElement("div");
-            div.classList.add("configSelectAction");
-
-            let h1 = document.createElement("h1");
-            h1.innerText = "Select Action";
-            div.appendChild(h1);
-
-            let actions = WheelConfig.actions();
-
-            for (let i = 0; i < actions.length; i++) {
-                let actionDiv = document.createElement("div");
-                actionDiv.classList.add("actionDiv");
-
-                let action = actions[i];
-
-                let p = document.createElement("p");
-                p.innerText = action[0];
-                p.style.margin = 0;
-                actionDiv.appendChild(p);
-
-                let cfg = this;
-
-                actionDiv.addEventListener("click", () => {
-                    while (actionContainer.firstChild) {
-                        actionContainer.removeChild(actionContainer.firstChild);
-                    }
-
-                    action[1](cfg, id, actionContainer);
-                    button.innerText = action[0];
-                    close();
-                });
-
-                div.appendChild(actionDiv);
-            }
-            
-            return div;
-        });
-    }
-
-    addOption() {  
-        this.createOption();
-        this.wheel.addWeight();
-    }
-
-    removeOption(index) {
-        this.options[index].remove();
-        this.options.splice(index, 1);
-        this.oldValues.splice(index, 1);
-
-        this.wheel.removeWeight(index);
-        
-        if (this.options.length == 1) {
-            this.setFirstRemoveVisibility(false);
-        }
-    }
-
-    export() {
-        let obj = {
-            name: this.name,
-            weights: []
-        };
-
-        for (let i = 0; i < this.options.length; i++) {
-            obj.weights.push({ weight: this.wheel.weights[i].weight, text: this.wheel.weights[i].text });
-        }
-
-        return obj;
-    }
-
-    import(obj) {
-        for (let i = 0; i < this.options.length; i++) {
-            this.options[i].remove();
-        }
-
-        this.options = [];
-
-        this.wheel = new Wheel(obj.weights);
-
-        for (let i = 0; i < obj.weights.length; i++) {
-            this.createOption("Option", obj.weights[i].weight, obj.weights[i].text);
-        }
-        
-        if (this.options.length == 1) {
-            this.setFirstRemoveVisibility(false);
-        }
-    }
-}
-
 class Config {
-    constructor() {
-        this.wheelConfigs = [];
-        this.div = document.createElement("div");
-        this.div.classList.add("configDiv");
-        document.body.appendChild(this.div);
-    }
+    constructor(sideBar, mainView, config = { type: fullConfigIndex, wheels: [] }) {
+        this.wheels = [];
+        
+        this.sideBar = document.createElement("div");
+        sideBar.appendChild(this.sideBar);
+        
+        // let split = new ResizableSplit(false);
+        // mainView.appendChild(split.container);
 
-    addWheel() {
-        let div = document.createElement("div");
+        this.mainView = document.createElement("div");
+        this.mainView.classList.add("wheelDiv");
+        mainView.appendChild(this.mainView);
+        // split.first = this.mainView;
+
+        // this.console = new Console();
+        // split.second = this.console.container;
+
+
+        this.prepareUI();
+
+        for (let i = 0; i < config.wheels.length; i++) {
+            this.importWheel(config.wheels[i]);
+        }
+    }
     
-        // Wheel
-    
-        let wheelDiv = document.createElement("div");
-        let bSpin = document.createElement("button")
-        let p5Div = document.createElement("div");
-        
-        wheelDiv.appendChild(bSpin);
-        wheelDiv.appendChild(p5Div);
-        div.appendChild(wheelDiv);
-    
-        wheelDiv.classList.add("wheelDiv");
-        
-        bSpin.innerText = "Spin";
-        
-        // Config
-        
-        let cfgDiv = document.createElement("div");
-        let bExp = document.createElement("button");
+    prepareUI() {
+        let buttonDiv = document.createElement("div");
+        buttonDiv.classList.add("buttonBar");
+
+        let bAdd = document.createElement("button");
+        bAdd.innerText = "Add Wheel";
+        bAdd.addEventListener("click", (() => this.addWheel()).bind(this));
+        buttonDiv.appendChild(bAdd);
+
         let bImp = document.createElement("button");
         let iImp = document.createElement("input");
-        let bAdd = document.createElement("button");
-        let cfg = new WheelConfig();
-    
-        cfgDiv.appendChild(bExp);
-        bImp.appendChild(iImp);
-        cfgDiv.appendChild(bImp);
-        cfgDiv.appendChild(bAdd);
-        cfgDiv.appendChild(cfg.div);
-        div.appendChild(cfgDiv);
-    
-        bExp.innerText = "Export";
-        bExp.style.marginLeft = "1.5em";
-        bExp.style.float = "left";
-        bExp.addEventListener("click", () => downloadJson("config.json", cfg.export()));
-    
-        bImp.innerText = "Import";
-        bImp.float = "left";
+        
+        bImp.innerText = "Import Wheel";
         bImp.addEventListener("click", () => iImp.click());
     
         iImp.type = "file";
         iImp.accept = ".json";
         iImp.style.display = "none";
-        iImp.addEventListener("change", async evt => {
-            cfg.import(JSON.parse(await evt.target.files[0].text()))
+        iImp.addEventListener("change", (async evt => {
+            this.importWheel(JSON.parse(await evt.target.files[0].text()))
+        }).bind(this));
+
+        bImp.appendChild(iImp);
+        buttonDiv.appendChild(bImp);
+
+        this.sideBar.appendChild(buttonDiv);
+
+        this.wheelList = document.createElement("ul");
+        this.wheelList.classList.add("wheelList");
+        this.sideBar.appendChild(this.wheelList);
+    }
+
+    delete() {
+        if (this.mainView !== null) {
+            this.mainView.remove();
+        }
+
+        if (this.sideBar !== null) {
+            this.sideBar.remove();
+        }
+    }
+
+    addWheel(name = "Wheel", weights = []) {
+        let config = new WheelConfig(name, weights);
+        
+        let item = document.createElement("li");
+        const wheel = { config: config, listItem: item };
+        
+        let drag = document.createElement("div");
+        drag.classList.add("drag");
+        drag.innerText = dragSymbol;
+        const wheels = this.wheels;
+        new DraggableListItem(drag, item, node => {
+            const other = wheels.filter(i => i.listItem === node)[0];
+            const i = wheels.indexOf(wheel);
+            const j = wheels.indexOf(other);
+            wheels[i] = other;
+            wheels[j] = wheel;
         });
+        item.appendChild(drag);
         
-        bAdd.innerText = "Add";
-        bAdd.addEventListener("click", () => cfg.addOption())
-    
-        bSpin.addEventListener("click", () => cfg.wheel.spin());
+        let nameInput = document.createElement("input");
+        nameInput.value = name;
+        nameInput.addEventListener("change", (() => this.changeWheelName(this.wheels.indexOf(wheel), nameInput.value)).bind(this));
+        item.appendChild(nameInput);
         
-        this.wheelConfigs.push(cfg);
+        let remove = document.createElement("button");
+        remove.innerText = removalSymbol;
+        remove.classList.add("remove");
+        remove.addEventListener("click", (() => this.removeWheel(this.wheels.indexOf(wheel))).bind(this));
+        item.appendChild(remove);
 
-        let p5Script = new p5(wheelSketch(cfg), p5Div);
-        p5Div.firstChild.style.visibility = "visible";
+        let open = document.createElement("button");
+        open.innerText = openSymbol;
+        open.classList.add("open");
+        open.addEventListener("click", (() => this.openWheel(this.wheels.indexOf(wheel))).bind(this));
+        item.appendChild(open);
+        
+        this.wheelList.appendChild(item);
+        this.wheels.push(wheel);
 
-        this.div.appendChild(div);
+        nameInput.focus();
+    }
+
+    importWheel(obj) {
+        if (typeof obj.type !== "number") {
+            console.error("Malformed wheel config file");
+            return;
+        }
+        
+        if (obj.type !== wheelConfigIndex) {
+            console.error("Wrong config file type");
+            return;
+        }
+
+        if (typeof obj.name !== "string" || !Array.isArray(obj.weights)) {
+            console.error("Malformed wheel config file");
+            return;
+        }
+
+        this.addWheel(obj.name, obj.weights);
+    }
+
+    openWheel(index) {
+        while (this.mainView.firstChild) {
+            this.mainView.removeChild(this.mainView.firstChild);
+        }
+
+        this.wheels[index].config.createView(this.mainView);
+    }
+
+    changeWheelName(index, name) {
+        this.wheels[index].config.name = name;
+    }
+
+    removeWheel(index) {
+        this.wheels[index].listItem.remove();
+        this.wheels[index].config.delete();
+        this.wheels.splice(index, 1);
+    }
+
+    export() {
+        const object = {
+            type: fullConfigIndex,
+            wheels: []
+        }
+
+        for (let i = 0; i < this.wheels.length; i++) {
+            object.wheels.push(this.wheels[i].config.export());
+        }
+
+        return object;
     }
 }
