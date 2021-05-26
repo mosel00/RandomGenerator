@@ -29,9 +29,8 @@ function importConfig() {
     iImp.style.display = "none";
     iImp.addEventListener("change", (async evt => {
         const process = Process.current;
-        const config = new Config(process.bar, process.view, JSON.parse(await evt.target.files[0].text()));
         process.config.delete();
-        process.config = config;
+        process.config = new Config(process.bar, process.view, JSON.parse(await evt.target.files[0].text()));
     }).bind(this));
 
     iImp.click();

@@ -14,19 +14,19 @@ class Config {
         this.sideBar = document.createElement("div");
         sideBar.appendChild(this.sideBar);
         
-        let split = new ResizableSplit(true);
-        mainView.appendChild(split.container);
-        split.container.style.height = "100%";
+        this.split = new ResizableSplit(true);
+        mainView.appendChild(this.split.container);
+        this.split.container.style.height = "100%";
 
         this.mainView = document.createElement("div");
         this.mainView.classList.add("wheelDiv");
         // mainView.appendChild(this.mainView);
-        split.first = this.mainView;
+        this.split.first = this.mainView;
         this.mainView.parentNode.style.height = "100%";
         this.mainView.parentNode.style.width = "calc(100% - 400px)"
 
         this.console = new Console();
-        split.second = this.console.container;
+        this.split.second = this.console.container;
 
         this.prepareUI();
 
@@ -68,8 +68,8 @@ class Config {
     }
 
     delete() {
-        if (this.mainView !== null) {
-            this.mainView.remove();
+        if (this.split !== null) {
+            this.split.remove();
         }
 
         if (this.sideBar !== null) {
