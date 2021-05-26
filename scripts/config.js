@@ -69,7 +69,7 @@ class Config {
 
     delete() {
         if (this.split !== null) {
-            this.split.remove();
+            this.split.container.remove();
         }
 
         if (this.sideBar !== null) {
