@@ -188,7 +188,7 @@ class WheelConfig {
         cfg.wheel.modifyAction(id(), {
             type: 1,
             data: { text: textInput.value }, 
-            action: () => console.log(cfg.wheel.weights[id()].action.data.text) 
+            action: () => cfg.output(cfg.wheel.weights[id()].action.data.text) 
         });
         
         textInput.addEventListener("input", () => cfg.wheel.weights[id()].action.data.text = textInput.value);
